@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "woocommerce-mcp-server",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "WORDPRESS_SITE_URL": "https://medfind.link",
+    "WOOCOMMERCE_CONSUMER_KEY": "ck_d539ee979574e7e6fdeb09cfd5fa80e069f3305e",
+    "WOOCOMMERCE_CONSUMER_SECRET": "cs_3e70a7b7b93cbeee2afa42f09a673c49eae61016",
+    "WORDPRESS_USERNAME": "befantasy",
+    "WORDPRESS_APP_PASSWORD": "DZ7b w1aD 1Cf1 6PN8 uCqQ QIHr",
+    "MCP_AUTH_TOKEN": "change-this-to-your-secret-token"
+  }
+}

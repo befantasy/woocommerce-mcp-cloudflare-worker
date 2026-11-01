@@ -1,0 +1,76 @@
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { registerProductTools } from './tools/products.js';
+import { registerCategoryTools } from './tools/categories.js';
+import { registerOrderTools } from './tools/orders.js';
+import { registerCustomerTools } from './tools/customers.js';
+import { registerCouponTools } from './tools/coupons.js';
+import { registerReportTools } from './tools/reports.js';
+import { registerMediaTools } from './tools/media.js';
+import { registerAttributeTools } from './tools/attributes.js';
+import { registerVariationTools } from './tools/variations.js';
+import { registerTagTools } from './tools/tags.js';
+import { registerBrandTools } from './tools/brands.js';
+import { registerShippingTools } from './tools/shipping.js';
+import { registerTaxTools } from './tools/taxes.js';
+import { registerWebhookTools } from './tools/webhooks.js';
+import { registerSettingsTools } from './tools/settings.js';
+import { registerRefundTools } from './tools/refunds.js';
+import { registerOrderNoteTools } from './tools/order-notes.js';
+import { registerPaymentGatewayTools } from './tools/payment-gateways.js';
+import { registerReviewTools } from './tools/reviews.js';
+import { registerSystemStatusTools } from './tools/system-status.js';
+import { registerDataTools } from './tools/data.js';
+import { registerResources } from './resources.js';
+import { registerPrompts } from './prompts.js';
+
+export function createServer(): McpServer {
+  const server = new McpServer({
+    name: 'woocommerce-mcp-worker',
+    version: '1.2.0',
+  });
+
+  if (process.env.WOOCOMMERCE_MCP_READ_ONLY === 'true') {
+    const originalRegisterTool = server.registerTool.bind(server);
+    (server as any).registerTool = (name: string, config: any, callback: any) => {
+      if (config.annotations?.readOnlyHint === true) {
+        return originalRegisterTool(name, config, callback);
+      }
+      const blockedCallback = async () => ({
+        content: [
+          {
+            type: 'text' as const,
+            text: `[READ-ONLY MODE] The tool "${name}" is blocked because WOOCOMMERCE_MCP_READ_ONLY is enabled. This tool modifies data. Disable read-only mode to use it.`,
+          },
+        ],
+        isError: true,
+      });
+      return (originalRegisterTool as any)(name, config, blockedCallback);
+    };
+  }
+
+  registerProductTools(server);
+  registerCategoryTools(server);
+  registerOrderTools(server);
+  registerCustomerTools(server);
+  registerCouponTools(server);
+  registerReportTools(server);
+  registerMediaTools(server);
+  registerAttributeTools(server);
+  registerVariationTools(server);
+  registerTagTools(server);
+  registerBrandTools(server);
+  registerShippingTools(server);
+  registerTaxTools(server);
+  registerWebhookTools(server);
+  registerSettingsTools(server);
+  registerRefundTools(server);
+  registerOrderNoteTools(server);
+  registerPaymentGatewayTools(server);
+  registerReviewTools(server);
+  registerSystemStatusTools(server);
+  registerDataTools(server);
+  registerResources(server);
+  registerPrompts(server);
+
+  return server;
+}
